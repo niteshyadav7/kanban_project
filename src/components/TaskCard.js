@@ -1,10 +1,11 @@
 import React from "react";
 import { Draggable } from "@hello-pangea/dnd";
 
-function TaskCard({ task, index, columnId, setBoard, board, onEdit }) {
-  const handleDelete = () => {
-    const updatedTasks = board[columnId].filter((t) => t.id !== task.id);
-    setBoard({ ...board, [columnId]: updatedTasks });
+const TaskCard = ({ task, index, columnId, board, setBoard, onEdit }) => {
+  const removeTask = () => {
+    const filteredTasks = board[columnId].filter((item) => item.id !== task.id);
+    const updatedBoard = { ...board, [columnId]: filteredTasks };
+    setBoard(updatedBoard);
   };
 
   return (
@@ -17,22 +18,22 @@ function TaskCard({ task, index, columnId, setBoard, board, onEdit }) {
           {...provided.dragHandleProps}
           style={{
             ...provided.draggableProps.style,
-            backgroundColor: snapshot.isDragging ? "#d1f0ff" : "#ffffff",
+            backgroundColor: snapshot.isDragging ? "#e0f7ff" : "#fff",
           }}
         >
           <h4>{task.title}</h4>
           <p className="meta">{task.description}</p>
-          <p className="meta">Created: {task.createdAt}</p>
-          <p className="priority">Priority: {task.priority}</p>
+          <p className="meta">Date: {task.createdAt}</p>
+          <p className="priority">Level: {task.priority}</p>
 
           <div style={{ marginTop: "8px", display: "flex", gap: "10px" }}>
             <button onClick={() => onEdit(task, columnId)}>✏ Edit</button>
-            <button onClick={handleDelete}>🗑 Delete</button>
+            <button onClick={removeTask}>🗑 Delete</button>
           </div>
         </div>
       )}
     </Draggable>
   );
-}
+};
 
 export default TaskCard;

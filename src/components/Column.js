@@ -2,7 +2,7 @@ import React from "react";
 import { Droppable } from "@hello-pangea/dnd";
 import TaskCard from "./TaskCard";
 
-function Column({ title, id, tasks, setBoard, board, onEdit }) {
+const Column = ({ title, id, tasks, setBoard, board, onEdit }) => {
   return (
     <div className="column">
       <h2 className="column-title">{title}</h2>
@@ -13,18 +13,18 @@ function Column({ title, id, tasks, setBoard, board, onEdit }) {
             {...provided.droppableProps}
             className="task-list"
             style={{
-              minHeight: "100px",
-              backgroundColor: snapshot.isDraggingOver ? "#dfe6e9" : "#ecf0f1",
-              padding: "10px",
-              borderRadius: "6px",
-              transition: "background-color 0.2s",
+              minHeight: "120px",
+              padding: "12px",
+              borderRadius: "8px",
+              backgroundColor: snapshot.isDraggingOver ? "#d6ebff" : "#f1f3f4",
+              transition: "background-color 0.3s ease",
             }}
           >
-            {tasks.map((task, index) => (
+            {tasks.map((item, idx) => (
               <TaskCard
-                key={task.id}
-                task={task}
-                index={index}
+                key={item.id}
+                task={item}
+                index={idx}
                 columnId={id}
                 setBoard={setBoard}
                 board={board}
@@ -37,6 +37,6 @@ function Column({ title, id, tasks, setBoard, board, onEdit }) {
       </Droppable>
     </div>
   );
-}
+};
 
 export default Column;

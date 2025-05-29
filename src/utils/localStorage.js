@@ -1,11 +1,13 @@
-
-export const saveBoard = (board) => {
-  localStorage.setItem("taskBoard", JSON.stringify(board));
+export const storeBoardData = (boardState) => {
+  localStorage.setItem("kanbanBoardData", JSON.stringify(boardState));
 };
 
-export const loadBoard = () => {
-  const data = localStorage.getItem("taskBoard");
-  return data ? JSON.parse(data) : {
+export const retrieveBoardData = () => {
+  const storedData = localStorage.getItem("kanbanBoardData");
+  if (storedData) {
+    return JSON.parse(storedData);
+  }
+  return {
     todo: [],
     inprogress: [],
     done: [],

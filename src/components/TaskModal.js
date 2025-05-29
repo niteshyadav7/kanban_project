@@ -1,38 +1,39 @@
 import React, { useState, useEffect } from "react";
 
-function TaskModal({ isOpen, onClose, onSave, existingTask }) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState("Low");
+const TaskModal = ({ isOpen, onClose, onSave, existingTask }) => {
+  const [taskTitle, setTaskTitle] = useState("");
+  const [taskDescription, setTaskDescription] = useState("");
+  const [taskPriority, setTaskPriority] = useState("Low");
 
   useEffect(() => {
     if (existingTask) {
-      setTitle(existingTask.title);
-      setDescription(existingTask.description);
-      setPriority(existingTask.priority);
+      setTaskTitle(existingTask.title);
+      setTaskDescription(existingTask.description);
+      setTaskPriority(existingTask.priority);
     } else {
-      setTitle("");
-      setDescription("");
-      setPriority("Low");
+      setTaskTitle("");
+      setTaskDescription("");
+      setTaskPriority("Low");
     }
   }, [existingTask]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!title.trim()) {
-      alert("Title is required");
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+
+    if (!taskTitle.trim()) {
+      alert("Task title is required.");
       return;
     }
 
-    const newTask = {
+    const taskData = {
       id: existingTask?.id || `task-${Date.now()}`,
-      title,
-      description,
-      priority,
+      title: taskTitle,
+      description: taskDescription,
+      priority: taskPriority,
       createdAt: existingTask?.createdAt || new Date().toISOString().split("T")[0],
     };
 
-    onSave(newTask);
+    onSave(taskData);
     onClose();
   };
 
@@ -41,38 +42,42 @@ function TaskModal({ isOpen, onClose, onSave, existingTask }) {
   return (
     <div className="modal">
       <div className="modal-content">
-        <h3>{existingTask ? "Edit Task" : "Add New Task"}</h3>
-        <form onSubmit={handleSubmit}>
+        <h3>{existingTask ? "Edit Task" : "Create Task"}</h3>
+        <form onSubmit={handleFormSubmit}>
           <input
             type="text"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter title"
+            value={taskTitle}
+            onChange={(e) => setTaskTitle(e.target.value)}
             required
             autoFocus
           />
           <textarea
-            placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Enter description"
+            value={taskDescription}
+            onChange={(e) => setTaskDescription(e.target.value)}
             rows="3"
           />
           <select
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
+            value={taskPriority}
+            onChange={(e) => setTaskPriority(e.target.value)}
           >
             <option>Low</option>
             <option>Medium</option>
             <option>High</option>
           </select>
           <div className="modal-actions">
-            <button type="submit">{existingTask ? "Update" : "Add"}</button>
-            <button type="button" onClick={onClose}>Cancel</button>
+            <button type="submit">
+              {existingTask ? "Update Task" : "Add Task"}
+            </button>
+            <button type="button" onClick={onClose}>
+              Cancel
+            </button>
           </div>
         </form>
       </div>
     </div>
   );
-}
+};
 
 export default TaskModal;

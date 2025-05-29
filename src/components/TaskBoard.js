@@ -4,96 +4,98 @@ import TaskModal from "./TaskModal";
 import { DragDropContext } from "@hello-pangea/dnd";
 import { loadBoard, saveBoard } from "../utils/localStorage";
 
-const defaultBoard = {
+const initialBoardState = {
   todo: [],
   inprogress: [],
   done: [],
 };
 
-function TaskBoard() {
-  const [board, setBoard] = useState(defaultBoard);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [targetColumn, setTargetColumn] = useState("todo");
-  const [editTask, setEditTask] = useState(null);
-  const [editColumn, setEditColumn] = useState("");
+const TaskBoard = () => {
+  const [boardData, setBoardData] = useState(initialBoardState);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [activeColumn, setActiveColumn] = useState("todo");
+  const [taskBeingEdited, setTaskBeingEdited] = useState(null);
+  const [taskEditColumn, setTaskEditColumn] = useState("");
 
   useEffect(() => {
-    const saved = loadBoard();
-    if (saved) setBoard(saved);
+    const storedBoard = loadBoard();
+    if (storedBoard) {
+      setBoardData(storedBoard);
+    }
   }, []);
 
   useEffect(() => {
-    saveBoard(board);
-  }, [board]);
+    saveBoard(boardData);
+  }, [boardData]);
 
-  const onDragEnd = (result) => {
+  const handleDragEnd = (result) => {
     const { source, destination } = result;
     if (!destination) return;
 
-    const sourceCol = [...board[source.droppableId]];
-    const [movedTask] = sourceCol.splice(source.index, 1);
+    const sourceTasks = [...boardData[source.droppableId]];
+    const [movedTask] = sourceTasks.splice(source.index, 1);
 
-    const destCol = [...board[destination.droppableId]];
-    destCol.splice(destination.index, 0, movedTask);
+    const destinationTasks = [...boardData[destination.droppableId]];
+    destinationTasks.splice(destination.index, 0, movedTask);
 
-    setBoard({
-      ...board,
-      [source.droppableId]: sourceCol,
-      [destination.droppableId]: destCol,
+    setBoardData({
+      ...boardData,
+      [source.droppableId]: sourceTasks,
+      [destination.droppableId]: destinationTasks,
     });
   };
 
-  const handleAddTask = (columnId) => {
-    setTargetColumn(columnId);
-    setEditTask(null); // reset edit
-    setEditColumn("");
-    setIsModalOpen(true);
+  const openAddModal = (columnKey) => {
+    setActiveColumn(columnKey);
+    setTaskBeingEdited(null);
+    setTaskEditColumn("");
+    setModalVisible(true);
   };
 
-  const handleEditTask = (task, columnId) => {
-    setEditTask(task);
-    setEditColumn(columnId);
-    setIsModalOpen(true);
+  const openEditModal = (task, columnKey) => {
+    setTaskBeingEdited(task);
+    setTaskEditColumn(columnKey);
+    setModalVisible(true);
   };
 
-  const handleSaveTask = (task) => {
-    if (editTask) {
-      // Edit existing
-      const updatedCol = board[editColumn].map((t) =>
-        t.id === task.id ? task : t
+  const handleTaskSave = (task) => {
+    if (taskBeingEdited) {
+      // Updating an existing task
+      const updatedTasks = boardData[taskEditColumn].map((item) =>
+        item.id === task.id ? task : item
       );
-      setBoard({ ...board, [editColumn]: updatedCol });
-      setEditTask(null);
-      setEditColumn("");
+      setBoardData({ ...boardData, [taskEditColumn]: updatedTasks });
+      setTaskBeingEdited(null);
+      setTaskEditColumn("");
     } else {
-      // Add new
-      const updatedCol = [...board[targetColumn], task];
-      setBoard({ ...board, [targetColumn]: updatedCol });
+      // Adding a new task
+      const updatedTasks = [...boardData[activeColumn], task];
+      setBoardData({ ...boardData, [activeColumn]: updatedTasks });
     }
   };
 
   return (
     <>
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragEnd={handleDragEnd}>
         <div className="taskboard">
-          {["todo", "inprogress", "done"].map((col) => (
-            <div key={col}>
+          {["todo", "inprogress", "done"].map((key) => (
+            <div key={key}>
               <Column
                 title={
-                  col === "todo"
+                  key === "todo"
                     ? "To Do"
-                    : col === "inprogress"
+                    : key === "inprogress"
                     ? "In Progress"
-                    : "Done"
+                    : "Completed"
                 }
-                id={col}
-                tasks={board[col]}
-                setBoard={setBoard}
-                board={board}
-                onEdit={handleEditTask}
+                id={key}
+                tasks={boardData[key]}
+                setBoard={setBoardData}
+                board={boardData}
+                onEdit={openEditModal}
               />
               <div style={{ textAlign: "center", margin: "10px 0" }}>
-                <button onClick={() => handleAddTask(col)}>➕ Add Task</button>
+                <button onClick={() => openAddModal(key)}>➕ Add Task</button>
               </div>
             </div>
           ))}
@@ -101,16 +103,16 @@ function TaskBoard() {
       </DragDropContext>
 
       <TaskModal
-        isOpen={isModalOpen}
+        isOpen={modalVisible}
         onClose={() => {
-          setIsModalOpen(false);
-          setEditTask(null);
+          setModalVisible(false);
+          setTaskBeingEdited(null);
         }}
-        onSave={handleSaveTask}
-        existingTask={editTask}
+        onSave={handleTaskSave}
+        existingTask={taskBeingEdited}
       />
     </>
   );
-}
+};
 
 export default TaskBoard;
