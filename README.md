@@ -1,23 +1,34 @@
-# Kanban Project
+# 📝 TaskBoard Pro – Kanban Task Manager
 
-A simple Kanban board application to manage tasks with drag-and-drop functionality.
+**TaskBoard Pro** is a Kanban-style task manager built with React. It allows users to create, edit, delete, and manage tasks across multiple columns using drag-and-drop. Task data is persisted locally in the browser using `localStorage`.
 
 ---
 
-## Setup Instructions
+## 🔗 Live Demo
 
-### Navigate into the project directory:
+👉 [View Live on Netlify](https://stalwart-syrniki-082dce.netlify.app/)
+
+---
+
+## 🚀 Features
+
+- ✅ Add tasks to any column
+- ✅ Edit existing tasks in a modal form
+- ✅ Delete tasks instantly
+- ✅ Drag & drop tasks across columns
+- ✅ Reorder tasks within columns
+- ✅ All data saved in `localStorage`
+- ✅ No external UI libraries used — clean CSS only
+
+---
+
+## 📦 Installation
+
+### 1. Clone the Repository
 
 ```bash
-cd kanban_project
+git clone https://github.com/niteshyadav7/kanban_project.git
+cd taskboard-pro
 npm install
 npm start
 ```
-
-## Features Implemented
-
-- Add, edit, and delete tasks
-- Drag and drop tasks between columns
-- Responsive design for desktop and mobile devices
-- Priority labels for tasks to indicate urgency
-- Modal form for creating or updating tasks
