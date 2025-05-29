@@ -19,14 +19,17 @@ function TaskModal({ isOpen, onClose, onSave, existingTask }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title.trim()) return alert("Title is required");
+    if (!title.trim()) {
+      alert("Title is required");
+      return;
+    }
 
     const newTask = {
       id: existingTask?.id || `task-${Date.now()}`,
       title,
       description,
       priority,
-      createdAt: existingTask?.createdAt || new Date().toLocaleDateString(),
+      createdAt: existingTask?.createdAt || new Date().toISOString().split("T")[0],
     };
 
     onSave(newTask);
@@ -46,12 +49,14 @@ function TaskModal({ isOpen, onClose, onSave, existingTask }) {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
+            autoFocus
           />
           <textarea
             placeholder="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-          ></textarea>
+            rows="3"
+          />
           <select
             value={priority}
             onChange={(e) => setPriority(e.target.value)}

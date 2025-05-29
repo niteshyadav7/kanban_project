@@ -14,6 +14,8 @@ function TaskBoard() {
   const [board, setBoard] = useState(defaultBoard);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [targetColumn, setTargetColumn] = useState("todo");
+  const [editTask, setEditTask] = useState(null);
+  const [editColumn, setEditColumn] = useState("");
 
   useEffect(() => {
     const saved = loadBoard();
@@ -43,12 +45,31 @@ function TaskBoard() {
 
   const handleAddTask = (columnId) => {
     setTargetColumn(columnId);
+    setEditTask(null); // reset edit
+    setEditColumn("");
+    setIsModalOpen(true);
+  };
+
+  const handleEditTask = (task, columnId) => {
+    setEditTask(task);
+    setEditColumn(columnId);
     setIsModalOpen(true);
   };
 
   const handleSaveTask = (task) => {
-    const updatedCol = [...board[targetColumn], task];
-    setBoard({ ...board, [targetColumn]: updatedCol });
+    if (editTask) {
+      // Edit existing
+      const updatedCol = board[editColumn].map((t) =>
+        t.id === task.id ? task : t
+      );
+      setBoard({ ...board, [editColumn]: updatedCol });
+      setEditTask(null);
+      setEditColumn("");
+    } else {
+      // Add new
+      const updatedCol = [...board[targetColumn], task];
+      setBoard({ ...board, [targetColumn]: updatedCol });
+    }
   };
 
   return (
@@ -69,6 +90,7 @@ function TaskBoard() {
                 tasks={board[col]}
                 setBoard={setBoard}
                 board={board}
+                onEdit={handleEditTask}
               />
               <div style={{ textAlign: "center", margin: "10px 0" }}>
                 <button onClick={() => handleAddTask(col)}>➕ Add Task</button>
@@ -80,8 +102,12 @@ function TaskBoard() {
 
       <TaskModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          setIsModalOpen(false);
+          setEditTask(null);
+        }}
         onSave={handleSaveTask}
+        existingTask={editTask}
       />
     </>
   );

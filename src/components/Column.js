@@ -1,12 +1,11 @@
-
+import React from "react";
 import { Droppable } from "@hello-pangea/dnd";
 import TaskCard from "./TaskCard";
 
-function Column({ title, id, tasks, setBoard, board }) {
+function Column({ title, id, tasks, setBoard, board, onEdit }) {
   return (
     <div className="column">
       <h2 className="column-title">{title}</h2>
-
       <Droppable droppableId={id}>
         {(provided, snapshot) => (
           <div
@@ -29,6 +28,7 @@ function Column({ title, id, tasks, setBoard, board }) {
                 columnId={id}
                 setBoard={setBoard}
                 board={board}
+                onEdit={onEdit}
               />
             ))}
             {provided.placeholder}

@@ -1,7 +1,7 @@
 import React from "react";
 import { Draggable } from "@hello-pangea/dnd";
 
-function TaskCard({ task, index, columnId, setBoard, board }) {
+function TaskCard({ task, index, columnId, setBoard, board, onEdit }) {
   const handleDelete = () => {
     const updatedTasks = board[columnId].filter((t) => t.id !== task.id);
     setBoard({ ...board, [columnId]: updatedTasks });
@@ -24,9 +24,11 @@ function TaskCard({ task, index, columnId, setBoard, board }) {
           <p className="meta">{task.description}</p>
           <p className="meta">Created: {task.createdAt}</p>
           <p className="priority">Priority: {task.priority}</p>
-          <button onClick={handleDelete} style={{ marginTop: "8px" }}>
-            🗑 Delete
-          </button>
+
+          <div style={{ marginTop: "8px", display: "flex", gap: "10px" }}>
+            <button onClick={() => onEdit(task, columnId)}>✏ Edit</button>
+            <button onClick={handleDelete}>🗑 Delete</button>
+          </div>
         </div>
       )}
     </Draggable>
