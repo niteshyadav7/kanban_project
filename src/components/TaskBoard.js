@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Column from "./Column";
 import TaskModal from "./TaskModal";
 import { DragDropContext } from "@hello-pangea/dnd";
-import { loadBoard, saveBoard } from "../utils/localStorage";
+import { retrieveBoardData, storeBoardData } from "../utils/localStorage";
 
 const initialBoardState = {
   todo: [],
@@ -18,14 +18,12 @@ const TaskBoard = () => {
   const [taskEditColumn, setTaskEditColumn] = useState("");
 
   useEffect(() => {
-    const storedBoard = loadBoard();
-    if (storedBoard) {
-      setBoardData(storedBoard);
-    }
+    const saved = retrieveBoardData();
+    if (saved) setBoardData(saved); // ✅ fixed from setBoard to setBoardData
   }, []);
 
   useEffect(() => {
-    saveBoard(boardData);
+    storeBoardData(boardData); // ✅ fixed from board to boardData
   }, [boardData]);
 
   const handleDragEnd = (result) => {
@@ -60,7 +58,6 @@ const TaskBoard = () => {
 
   const handleTaskSave = (task) => {
     if (taskBeingEdited) {
-      // Updating an existing task
       const updatedTasks = boardData[taskEditColumn].map((item) =>
         item.id === task.id ? task : item
       );
@@ -68,7 +65,6 @@ const TaskBoard = () => {
       setTaskBeingEdited(null);
       setTaskEditColumn("");
     } else {
-      // Adding a new task
       const updatedTasks = [...boardData[activeColumn], task];
       setBoardData({ ...boardData, [activeColumn]: updatedTasks });
     }
